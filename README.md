@@ -12,9 +12,9 @@
 ## 체크리스트
 
 1. [ ] 아키텍처
-	1. [ ] doran-doran 서비스의 전체 아키텍처는 doran-doran-api repository에 있으며, doran-doran에 관련된 모든 repository는 해당 아키텍처를 따른다. 이 내용은 doran 관련 모든 repo의 CLAUDE.md에 기록한다.
-	2. [ ] 클라우드에 올라갈 엔진 구성을 확인하기
-	3. [ ] 엔진이 각각 repo로 모듈화 되어있는지 확인하기 -> doran-doran-api repo의 gpu 폴더가 gpu 클라우드에 올라가야하는 모듈이라면 따로 repo를 만들어 관리해야할수있음. (동화 낭독 생성 엔진)
+	1. [x] doran-doran 서비스의 전체 아키텍처는 doran-doran-api repository에 있으며, doran-doran에 관련된 모든 repository는 해당 아키텍처를 따른다. 이 내용은 doran 관련 모든 repo의 CLAUDE.md에 기록한다.
+	2. [x] 클라우드에 올라갈 엔진 구성을 확인하기
+	3. [x] 엔진이 각각 repo로 모듈화 되어있는지 확인하기 -> doran-doran-api repo의 gpu 폴더가 gpu 클라우드에 올라가야하는 모듈이라면 따로 repo를 만들어 관리해야할수있음. (동화 낭독 생성 엔진)
 	4. [ ] 모든 엔진이 클라우드에 올라가 연동는지, doran-doran의 모든 기능이 제대로 동작하는지 검증
 2. [ ] 서비스 배포
 	1. [ ] 토스 - 가능한지 확인하기
@@ -70,3 +70,25 @@
 			2. [ ] 해당 repo를 기반으로 추가/수정/삭제/ai 생성/관련 파일 조회 및 수정, 등 필요한 기능의 UI를 구현한다.
 			3. [ ] 동일한 스크립트(혹은 문장)에 대하여 여러개의 이미지 파일이 존재할수있으며 조회 및 선택할 수 있다. 삭제는 admin만 가능
 9. [ ] 보안 검토
+
+## 확인 결과
+
+### 1.1 모든 repo CLAUDE.md (2026-11-13)
+API #84 · 앱 #36 · 스튜디오 #23 · 그림 엔진 #1 · 배경음 엔진 #1 머지. `dorandoran-service`는 옛 PoC라 제외.
+
+### 1.2 클라우드에 올라갈 엔진 구성 (2026-11-13)
+
+| 엔진 | 하는 일 | 코드 | 클라우드 (Modal 앱) | 상태 |
+|---|---|---|---|---|
+| Qwen3-TTS | 성우·부모 목소리 낭독 | API `workers/gpu` | `doran-voice-worker-qwen3_tts` (T4) | 배포됨 |
+| Seed-VC V2 | 목소리 변환 | API `workers/gpu` | `doran-voice-worker-seed_vc` (T4) | 배포됨, 재배포 대기 |
+| whisper | 받아쓰기(성우 녹음 문장 나누기) | API `workers/gpu` | `doran-voice-worker-whisper` (T4) | 배포됨 |
+| ComfyUI + FLUX | 장면 그림 | 그림 엔진 repo(고정 커밋) + API `workers/gpu` | `doran-voice-worker-comfy_flux` (L4) | 배포됨, 모델 가중치 없음(HF 라이선스 동의 필요) |
+| beep | 시험용 가짜 엔진 | API `workers/gpu` | CPU | 배포됨 |
+| BGM | 배경음 | 배경음 엔진 repo | 없음 | 연동 안 됨 |
+| 원고 생성 | AI 이야기 생성 | 없음 | 없음 | 없음(규칙 검사만 API `src/studio-lib`) |
+
+### 1.3 엔진 repo 모듈화 (2026-11-13)
+- 그림 엔진·배경음 엔진은 따로 repo다. 낭독 엔진(TTS·변환·받아쓰기)은 API repo `workers/gpu` 한 폴더에서 엔진마다 Modal 앱 하나로 따로 배포된다.
+- 판단(에이전트): 지금은 `workers/gpu`를 API repo에 둔다. 작업 페이로드·HMAC 콜백 계약을 API 디스패처(`src/gpu`)와 같은 커밋에서 함께 바꾸기 때문이다. 나누면 계약을 바꿀 때마다 두 repo 버전을 맞춰야 한다. 배포는 이미 엔진별로 나뉘어 있다. 그림 엔진만 따로인 것은 ComfyUI 포크라서다.
+- 따로 repo가 필요해지는 때: 다른 팀이 엔진을 맡거나, 엔진 쪽 의존성(GPL-3.0 Seed-VC 등) 때문에 코드를 떼어야 할 때.
