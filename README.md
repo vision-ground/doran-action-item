@@ -4,7 +4,7 @@
 
 | 무엇 | 주소 | 상태 (2026-11-13 확인) |
 |---|---|---|
-| 서비스 웹 (앱 웹 베타) | https://app.3-37-108-169.sslip.io | 설정 머지됨(API #83·앱 #34). 지금은 접속 안 됨(TLS 실패), EC2 반영 대기 |
+| 서비스 웹 (앱 웹 베타) | https://app.3-37-108-169.sslip.io | 동작 (EC2 Caddy, API #83·앱 #34) |
 | 서비스 API (EC2 개발 서버) | https://3-37-108-169.sslip.io | 동작 |
 | 스튜디오 | https://vision-ground.github.io/doran-studio-web/ | 동작. 기본 API는 EC2 |
 | 아키텍처 다이어그램 | https://vision-ground.github.io/doran-architecture/ | 동작 |
