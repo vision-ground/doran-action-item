@@ -1,5 +1,16 @@
 # doran-action-item
 
+## 배포 주소
+
+| 무엇 | 주소 | 상태 (2026-11-13 확인) |
+|---|---|---|
+| 서비스 웹 (앱 웹 베타) | https://app.3-37-108-169.sslip.io | 설정 머지됨(API #83·앱 #34). 지금은 접속 안 됨(TLS 실패), EC2 반영 대기 |
+| 서비스 API (EC2 개발 서버) | https://3-37-108-169.sslip.io | 동작 |
+| 스튜디오 | https://vision-ground.github.io/doran-studio-web/ | 동작. 기본 API는 EC2 |
+| 아키텍처 다이어그램 | https://vision-ground.github.io/doran-architecture/ | 동작 |
+
+## 체크리스트
+
 1. [ ] 아키텍처
 	1. [ ] doran-doran 서비스의 전체 아키텍처는 doran-doran-api repository에 있으며, doran-doran에 관련된 모든 repository는 해당 아키텍처를 따른다. 이 내용은 doran 관련 모든 repo의 CLAUDE.md에 기록한다.
 	2. [ ] 클라우드에 올라갈 엔진 구성을 확인하기
